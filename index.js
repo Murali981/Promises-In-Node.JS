@@ -29,6 +29,31 @@ const writeFilePro = (file, data) => {
   });
 };
 
+///////////////////// Implementing Promises using async/await which were introduced to Javascript in ES8 /////////////////////////
+
+const getDogPic = async () => {
+  try {
+    const data = await readFilePro(`${__dirname}/dog.txt`); // This await here will stop the code from running at this point until the promise
+    // is resolved . Now if the promise is fulfilled which means if the Promise is successful then the value of the await expression is the
+    // resolved value of the promise which is finally assigned to the data variable
+    console.log(`Breed: ${data}`);
+
+    const res = await superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    );
+    console.log(res.body.message);
+
+    await writeFilePro("dog-img.txt", res.body.message);
+
+    console.log("Random dog image has saved to the file");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+getDogPic();
+
+/*
 readFilePro(`${__dirname}/dog.txt`)
   .then((data) => {
     console.log(`Breed: ${data}`);
@@ -50,6 +75,7 @@ readFilePro(`${__dirname}/dog.txt`)
   .catch((err) => {
     console.log(err);
   });
+  */
 // This readFilePro function will return a promise and we are catcing the promise using the
 // then() handler . The data that we are passing into the above then() handler is the result of the promise that we are returning from
 // the above resolve() method incase there is no error in getting the data back
