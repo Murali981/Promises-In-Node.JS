@@ -2,6 +2,58 @@ const fs = require("fs");
 
 const superagent = require("superagent");
 
+const readFilePro = (file) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, (err, data) => {
+      if (err) {
+        reject("I could not find that file"); // Whatever we pass into the reject(err) function will be the error later available in the catch() method
+      }
+      resolve(data); // Whatever variable we are passing into the resolve(data) function will be later available as an argument in
+      // the then() method . In simple words whatever we are passing into the resolve(data) function is the result of the promise
+      // that will be available in the then() handler
+    });
+  }); // We are using the Promise constructor here which was introduced in the language with ES6. This promise
+  // constructor will take a so called executor function which will get called immediately when the promise is created and this
+  // executor function will be called with two arguments: resolve and reject. These functions are used to resolve or reject the promise.
+  // In this case, if there is an error reading the file, the reject function will be called with an error message. Otherwise, the resolve function
+  // will be called with the file data.
+};
+
+const writeFilePro = (file, data) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(file, data, (err) => {
+      if (err) reject("Could not write file 🥲");
+      resolve("success"); // We donot have any data to pass here . So we are passing some random string which is "success" . There
+      // is no rule that everytime a promise has to return a meaningful value
+    });
+  });
+};
+
+readFilePro(`${__dirname}/dog.txt`)
+  .then((data) => {
+    console.log(`Breed: ${data}`);
+
+    return superagent.get(`https://dog.ceo/api/breed/${data}/images/random`);
+  })
+  .then((res) => {
+    console.log(res.body.message);
+
+    return writeFilePro("dog-img.txt", res.body.message);
+
+    // fs.writeFile("dog-img.txt", res.body.message, (err) => {
+    //   console.log("Random dog image has saved to the file");
+    // });
+  })
+  .then(() => {
+    console.log("Random dog image has saved to the file");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+// This readFilePro function will return a promise and we are catcing the promise using the
+// then() handler . The data that we are passing into the above then() handler is the result of the promise that we are returning from
+// the above resolve() method incase there is no error in getting the data back
+
 // fs.readFile(`${__dirname}/dog.txt`, (err, data) => {
 //   console.log(`Breed: ${data}`);
 
@@ -34,18 +86,18 @@ const superagent = require("superagent");
    method for handling the rejected promises which will return a error is the catch() method . So after the then() method we can 
    chain this then() method with a catch() method to handle the error*/
 
-fs.readFile(`${__dirname}/dog.txt`, (err, data) => {
-  console.log(`Breed: ${data}`);
+// fs.readFile(`${__dirname}/dog.txt`, (err, data) => {
+//   console.log(`Breed: ${data}`);
 
-  superagent
-    .get(`https://dog.ceo/api/breed/${data}/images/random`)
-    .then((res) => {
-      console.log(res.body.message);
-      fs.writeFile("dog-img.txt", res.body.message, (err) => {
-        console.log("Random dog image has saved to the file");
-      });
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-});
+//   superagent
+//     .get(`https://dog.ceo/api/breed/${data}/images/random`)
+//     .then((res) => {
+//       console.log(res.body.message);
+//       fs.writeFile("dog-img.txt", res.body.message, (err) => {
+//         console.log("Random dog image has saved to the file");
+//       });
+//     })
+//     .catch((err) => {
+//       console.log(err.message);
+//     });
+// });
