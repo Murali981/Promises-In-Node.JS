@@ -48,11 +48,37 @@ const getDogPic = async () => {
     console.log("Random dog image has saved to the file");
   } catch (err) {
     console.log(err);
+
+    throw err;
   }
+  return "2: Ready 🐶"; // This is the promise value returned by the below getDogPic() method called below in the await method
 };
 
-getDogPic();
+(async () => {
+  try {
+    console.log("1: Will get dog pics!");
+    const x = await getDogPic(); // This is an async function which will return a promise.
+    // Here the x contains this string  "2: Ready 🐶" which is returned by this return "2: Ready 🐶";
+    console.log(x);
+    console.log("3: Done getting the dog pics!");
+  } catch (err) {
+    console.log("Error!");
+  }
+})(); // This is an IIFE which is Immediately Invoked Function Expression
 
+/*
+console.log("1: Will get dog pics!");
+getDogPic()
+  .then((x) => {
+    // Here getDogPic() returns a promise and each time  when we have a promise , we use the then() method inorder to get access
+    // to it's future value
+    console.log(x);
+    console.log("3: Done getting the dog pics!");
+  })
+  .catch((err) => {
+    console.log("Error!");
+  });
+    */
 /*
 readFilePro(`${__dirname}/dog.txt`)
   .then((data) => {
