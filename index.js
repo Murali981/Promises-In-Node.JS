@@ -31,6 +31,31 @@ const writeFilePro = (file, data) => {
 
 ///////////////////// Implementing Promises using async/await which were introduced to Javascript in ES8 /////////////////////////
 
+// const getDogPic = async () => {
+//   try {
+//     const data = await readFilePro(`${__dirname}/dog.txt`); // This await here will stop the code from running at this point until the promise
+//     // is resolved . Now if the promise is fulfilled which means if the Promise is successful then the value of the await expression is the
+//     // resolved value of the promise which is finally assigned to the data variable
+//     console.log(`Breed: ${data}`);
+
+//     const res = await superagent.get(
+//       `https://dog.ceo/api/breed/${data}/images/random`
+//     );
+//     console.log(res.body.message);
+
+//     await writeFilePro("dog-img.txt", res.body.message);
+
+//     console.log("Random dog image has saved to the file");
+//   } catch (err) {
+//     console.log(err);
+
+//     throw err;
+//   }
+//   return "2: Ready 🐶"; // This is the promise value returned by the below getDogPic() method called below in the await method
+// };
+
+///////////// Implementing Multiple Promises Simultaneously ///////////////
+
 const getDogPic = async () => {
   try {
     const data = await readFilePro(`${__dirname}/dog.txt`); // This await here will stop the code from running at this point until the promise
@@ -38,12 +63,31 @@ const getDogPic = async () => {
     // resolved value of the promise which is finally assigned to the data variable
     console.log(`Breed: ${data}`);
 
-    const res = await superagent.get(
+    const res1Pro = superagent.get(
       `https://dog.ceo/api/breed/${data}/images/random`
     );
-    console.log(res.body.message);
 
-    await writeFilePro("dog-img.txt", res.body.message);
+    const res2Pro = superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    );
+
+    const res3Pro = superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    );
+
+    const all = await Promise.all([res1Pro, res2Pro, res3Pro]); // It will run all these array of promises at the same time
+    // and then save all of the resolved values from the above three promises into the all variable.
+
+    const imgs = all.map((el) => {
+      el.body.message;
+    });
+    console.log(imgs);
+
+    // console.log(all);
+
+    // console.log(res.body.message);
+
+    await writeFilePro("dog-img.txt", imgs.join("\n"));
 
     console.log("Random dog image has saved to the file");
   } catch (err) {
@@ -51,20 +95,22 @@ const getDogPic = async () => {
 
     throw err;
   }
-  return "2: Ready 🐶"; // This is the promise value returned by the below getDogPic() method called below in the await method
+  //   return "2: Ready 🐶"; // This is the promise value returned by the below getDogPic() method called below in the await method
 };
 
-(async () => {
-  try {
-    console.log("1: Will get dog pics!");
-    const x = await getDogPic(); // This is an async function which will return a promise.
-    // Here the x contains this string  "2: Ready 🐶" which is returned by this return "2: Ready 🐶";
-    console.log(x);
-    console.log("3: Done getting the dog pics!");
-  } catch (err) {
-    console.log("Error!");
-  }
-})(); // This is an IIFE which is Immediately Invoked Function Expression
+//////////////////////////////////////////////////////////////////////////////////
+
+// (async () => {
+//   try {
+//     console.log("1: Will get dog pics!");
+//     const x = await getDogPic(); // This is an async function which will return a promise.
+//     // Here the x contains this string  "2: Ready 🐶" which is returned by this return "2: Ready 🐶";
+//     console.log(x);
+//     console.log("3: Done getting the dog pics!");
+//   } catch (err) {
+//     console.log("Error!");
+//   }
+// })(); // This is an IIFE which is Immediately Invoked Function Expression
 
 /*
 console.log("1: Will get dog pics!");
